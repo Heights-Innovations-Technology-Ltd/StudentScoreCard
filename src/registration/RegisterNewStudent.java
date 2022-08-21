@@ -4,30 +4,41 @@ import model.Course;
 import model.Student;
 
 import java.util.*;
+import report.ReportPrinter;
 
 public class RegisterNewStudent {
+
     Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         RegisterNewStudent rst = new RegisterNewStudent();
         Set<Student> students = new HashSet<>();
 
-        for(int i = 1; i <= 5; i++){
+        for (int i = 1; i <= 5; i++) {
             Student student = rst.registerStudent();
             students.add(student);
         }
 
-        for (Student s: students) {
-            System.out.println("\nCourse scorecard for "+ s.getFirstname() +" Student Number: "+ s.getStudentNo());
+        for (Student s : students) {
+            System.out.println("\nCourse scorecard for " + s.getFirstname() + " Student Number: " + s.getStudentNo());
             s.setCourses(rst.getCourseScores());
+
+            int totalScore = 0;
+            for (Course c : s.getCourses()) {
+                totalScore += c.getScore();
+            }
+            s.setTotalScore(totalScore);
+            s.setAverageScore(totalScore / s.getCourses().size());
         }
 
-        for (Student s: students) {
-
-        }
+        List<Student> studentList = new ArrayList<>(students);
+        Collections.sort(studentList);
+       for (Student s: studentList){
+           ReportPrinter.printReportCard(s);
+       }
     }
 
-    private Student registerStudent(){
+    private Student registerStudent() {
         Student student = new Student();
 
         System.out.println("Welcome to Heights Innovations Technologies || Student Registration Portal");
@@ -47,18 +58,17 @@ public class RegisterNewStudent {
         student.setYear(scanner.next());
 
         String studentNo = generateStudentNo(student);
-        System.out.println("Your student number is: "+ studentNo);
+        System.out.println("Your student number is: " + studentNo);
         student.setStudentNo(studentNo);
 
         return student;
     }
 
-    private Set<Course> getCourseScores(){
+    private Set<Course> getCourseScores() {
 
         Set<Course> courses = new HashSet<>();
 
         Course course = new Course();
-
 
         course.setCourse_name("Java");
         System.out.print("Supply your score in Java");
@@ -80,10 +90,10 @@ public class RegisterNewStudent {
         course.setScore(scanner.nextInt());
         courses.add(course);
 
-        return  courses;
+        return courses;
     }
 
-    private static String generateStudentNo(Student student){
+    private static String generateStudentNo(Student student) {
         int number = 123;
         return (student.getFirstname().substring(0, 2) + student.getLastname().substring(0, 2) + number++).toUpperCase();
     }
